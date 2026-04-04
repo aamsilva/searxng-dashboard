@@ -24,7 +24,7 @@ body { background: #0a0a0f; color: #e0e0e0; font-family: -apple-system, BlinkMac
 </style></head><body>
 <div class="header">
 <div><h1>🕷️ Mass Extraction Dashboard</h1><div class="meta">Zero-cost local extraction pipeline • trafilatura + readability + bs4</div></div>
-<div style="text-align:right"><div class="meta">Última atualização</div><div style="font-size:16px;color:#fff">2026-04-05 00:46:13</div></div>
+<div style="text-align:right"><div class="meta">Última atualização</div><div style="font-size:16px;color:#fff">2026-04-05 00:53:13</div></div>
 </div>
 <div class="container">
 <div class="stats-grid">
@@ -248,28 +248,55 @@ body { background: #0a0a0f; color: #e0e0e0; font-family: -apple-system, BlinkMac
 <div class="footer">Hermes Agent • Mass Extraction Pipeline • Zero API Cost • /Volumes/disco1tb/hermes/extractions/</div>
 </div>
 <script>
-function cloneOpts() {
-    return {responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-      plugins: {legend: {position: 'top', labels: {color: '#888', fontSize: 10, boxWidth: 10, padding: 8}}},
-      scales: {x: {ticks: {color: '#555', fontSize: 9}, grid: {color: '#1a1a2e'}, beginAtZero: true}, y: {ticks: {color: '#555', fontSize: 10}, grid: {color: '#1a1a2e'}}};}
-
+window.addEventListener('DOMContentLoaded', function() {
 var methodLabels = [];
 var methodData = [];
 var methodColors = ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6'];
 methodLabels = ["readability"];
 methodData = [24];
-new Chart(document.getElementById('methodChart'), {
-    type: 'bar', data: {labels: methodLabels, datasets: [{label: 'Extractions', data: methodData,
-    backgroundColor: methodColors.slice(0, methodLabels.length), borderRadius: 4}]},
-    options: cloneOpts()});
-
-var opts2 = cloneOpts();
-delete opts2.indexAxis;
 var hourlyLabels = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"];
 var hourlyData = [26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-new Chart(document.getElementById('hourlyChart'), {
-    type: 'bar', data: {labels: hourlyLabels, datasets: [{label: 'Extractions', data: hourlyData,
-    backgroundColor: hourlyData.map(v => v > 0 ? 'rgba(46,204,113,0.6)' : 'transparent'), borderRadius: 3}]},
-    options: opts2});
+
+var methodOpts = {
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    plugins: {
+        legend: {display: false},
+        tooltip: {callbacks: {label: function(ctx) { return ctx.parsed.x + ' extractions'; }} },
+    },
+    scales: {
+        x: {ticks: {color: '#555', font: {size: 9}}, grid: {color: '#1a1a2e'}, beginAtZero: true},
+        y: {ticks: {color: '#888', font: {size: 10}}, grid: {color: '#1a1a2e'}}
+    }
+};
+if (methodLabels.length > 0) {
+    new Chart(document.getElementById('methodChart'), {
+        type: 'bar', data: {labels: methodLabels, datasets: [{label: 'Extractions', data: methodData,
+        backgroundColor: methodColors.slice(0, methodLabels.length), borderRadius: 6, barThickness: 30}]},
+        options: methodOpts});
+} else {
+    document.getElementById('methodChart').parentElement.innerHTML += '<div style="text-align:center;color:#444;padding:40px;">No data yet</div>';
+}
+
+var hourlyOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+        legend: {display: false},
+        tooltip: {callbacks: {label: function(ctx) { return ctx.parsed.y + ' extractions'; }} },
+    },
+    scales: {
+        x: {ticks: {color: '#555', font: {size: 8}, maxRotation: 90}, grid: {color: '#1a1a2e'}, beginAtZero: true},
+        y: {ticks: {color: '#555', font: {size: 9}, stepSize: 1}, grid: {color: '#1a1a2e'}, beginAtZero: true}
+    }
+};
+if (hourlyData.length > 0) {
+    var hourlyColors = hourlyData.map(function(v) { return v > 0 ? '#2ecc71' : '#1a1a2e'; });
+    new Chart(document.getElementById('hourlyChart'), {
+        type: 'bar', data: {labels: hourlyLabels, datasets: [{label: 'Extractions/hour', data: hourlyData,
+        backgroundColor: hourlyColors, borderRadius: 3}]},
+        options: hourlyOpts});
+} else {
+    document.getElementById('hourlyChart').parentElement.innerHTML += '<div style="text-align:center;color:#444;padding:40px;">No data yet</div>';
+}
+});
 </script>
 </body></html>
